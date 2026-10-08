@@ -1,0 +1,4 @@
+# Laid down by Claude Code at every load; never commit.
+.claude-plugin/types/
+node_modules/
+.DS_Store

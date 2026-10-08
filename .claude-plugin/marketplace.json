@@ -1,0 +1,13 @@
+{
+  "name": "clean-view",
+  "description": "Clean View: a calm, plain-English progress checklist for Claude Code.",
+  "owner": {
+    "name": "spacewitch123"
+  },
+  "plugins": [
+    {
+      "name": "clean-view",
+      "source": "./"
+    }
+  ]
+}
