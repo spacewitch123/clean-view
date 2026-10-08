@@ -25,6 +25,8 @@ const BAND = {
 function world(on: On) {
   mock.store(on)
   const clock = mock.clock(on, { now: 1_000_000 })
+  // The engine's own band with nothing in it.
+  on('ui.render', { component: 'AbovePrompt' }, () => ({ type: 'engine', ref: 0 }))
   on('session.start', ($, e) => ({ cwd: e.cwd }))
   on('tool.register', ($, e) => ({ value: { tool: `mcp__clean-view__${e.name}` } }))
   on('command.register', ($, e) => ({ value: { command: e.name } }))

@@ -29,7 +29,9 @@ Answer `y` to add the marketplace, then press Enter to install it for your user.
 - Click **[ ● Clean View: ON ]** at the top right of the checklist to flip it.
 - Or type `/simple off` to see everything again, `/simple on` to hide it, or `/simple` to flip it.
 
-Clean View starts on, and remembers your choice after a restart. When it's off, everything Claude does shows again and only the button stays.
+Clean View is on every time Claude Code starts. Turning it off lasts until you close that session. When it's off, everything Claude does shows again and only the button stays.
+
+Clean View shares the space above the prompt with other mods, such as [Pulse](https://github.com/spacewitch123/pulse), so both show together.
 
 ## Good to know
 

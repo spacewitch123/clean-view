@@ -1,5 +1,5 @@
 import { atom, read, update } from 'claude-code'
-import type { EngineInterface, On } from 'claude-code'
+import type { EngineInterface, On, RenderElement } from 'claude-code'
 
 import type { CleanViewChecklist, CleanViewTask } from '../types'
 import { cleanName } from './clean-name'
@@ -12,7 +12,6 @@ type Timer = { cancel: () => void }
 const PLUGIN = 'clean-view'
 const PLAN_TOOL = `mcp__${PLUGIN}__plan_steps`
 const REPORT_TOOL = `mcp__${PLUGIN}__report_progress`
-const STORE_KEY = 'cleanViewEnabled'
 
 const METER_CELLS = 10
 const TICK_MS = 250
@@ -313,7 +312,6 @@ async function setEnabled($: Engine, value: boolean | 'toggle'): Promise<boolean
     isOn = value === 'toggle' ? !was : value
     return isOn
   })
-  await $.store.set(STORE_KEY, isOn)
 
   if (!isOn) {
     await update($, checklistAtom, () => null)
@@ -383,11 +381,8 @@ export function registerCleanView(on: On): void {
       immediate: true,
     })
 
-    const saved = await $.store.get(STORE_KEY)
-
-    if (typeof saved === 'boolean') {
-      await update($, enabledAtom, () => saved)
-    }
+    // Every launch starts calm: a choice made with the button or /simple lasts the session.
+    await update($, enabledAtom, () => true)
 
     return started
   })
@@ -636,9 +631,22 @@ export function registerCleanView(on: On): void {
   })
 
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
+    const below = await next(e)
+
     if (e.props.hasSurvey) {
-      return next(e)
+      return below
     }
+
+    // Share the band: whatever other mods drew sits under the checklist.
+    const withBelow = (tree: RenderElement): RenderElement =>
+      below.type === 'engine' ? (
+        tree
+      ) : (
+        <Box flexDirection="column">
+          {tree}
+          {below}
+        </Box>
+      )
 
     const isEnabled = await read($, enabledAtom)
     const c = isEnabled ? await read($, checklistAtom) : null
@@ -700,7 +708,7 @@ export function registerCleanView(on: On): void {
     )
 
     if (c === null || c.isCollapsed) {
-      return <Box flexDirection="column">{headerRow}</Box>
+      return withBelow(<Box flexDirection="column">{headerRow}</Box>)
     }
 
     const firstUpcoming = c.tasks.findIndex(t => t.status === 'upcoming')
@@ -742,11 +750,11 @@ export function registerCleanView(on: On): void {
       )
     })
 
-    return (
+    return withBelow(
       <Box flexDirection="column">
         {headerRow}
         {rows}
-      </Box>
+      </Box>,
     )
   })
 }

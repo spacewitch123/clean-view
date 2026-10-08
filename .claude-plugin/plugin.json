@@ -1,6 +1,6 @@
 {
   "name": "clean-view",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Hides tool calls and shows one calm, plain-English checklist of what Claude is doing.",
   "author": { "name": "spacewitch123" },
   "license": "MIT",
